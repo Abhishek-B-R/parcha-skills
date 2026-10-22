@@ -157,6 +157,9 @@ class SecurityGauntletTest(unittest.TestCase):
                     os.environ[key] = value
 
     def test_explicit_unsupported_harness_target_fails_without_echo_or_artifact(self):
+        script = os.environ.get("RECALL_TEST_SCRIPT")
+        if not script or not Path(script).is_file():
+            self.skipTest("set RECALL_TEST_SCRIPT to the separately installed private Recall exporter")
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             claude = root / "claude"
@@ -176,7 +179,7 @@ class SecurityGauntletTest(unittest.TestCase):
                 with self.assertRaises(self.recap.RecapError) as raised:
                     self.recap.collect(SimpleNamespace(
                         current=False, session=str(target), output=str(output), repo=None,
-                        recall_script=str(Path(self.recap.__file__).parents[4] / "recall/skills/recall/scripts/recall.py"),
+                        recall_script=script,
                     ))
             finally:
                 for key, value in previous.items():

@@ -19,11 +19,16 @@ class NativePortabilityTest(unittest.TestCase):
         recall = skill_root / "recall"
         recap.parent.mkdir(parents=True)
         shutil.copytree(PACKAGE / "skills/recap", recap)
+        script = os.environ.get("RECALL_TEST_SCRIPT")
+        if not script or not Path(script).is_file():
+            self.skipTest("set RECALL_TEST_SCRIPT to the separately installed private Recall exporter")
         shutil.copytree(RECALL_PACKAGE / "skills/recall", recall)
+        shutil.copytree(Path(script).resolve().parent, recall / "scripts")
         self.assertEqual(list(skill_root.rglob("recap/SKILL.md")), [recap / "SKILL.md"])
         return recap, recall
 
     def run_recap(self, home: Path, cwd: Path, argv: list[str], extra_env: dict[str, str]):
+        (home / ".recap").mkdir(mode=0o700, exist_ok=True)
         environment = {
             **os.environ,
             "HOME": str(home),

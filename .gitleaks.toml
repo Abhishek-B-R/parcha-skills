@@ -19,9 +19,6 @@ regexes = [
 ]
 paths = [
   # redaction/scrubbing test suites built around synthetic canary secrets
-  '''tether/tests/.*''',
-  '''recall/tests/.*''',
-  '''recall/server/tests/.*''',
   '''recap/tests/.*''',
   '''desloppify/tests/.*''',
 ]

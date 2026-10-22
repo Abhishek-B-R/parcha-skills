@@ -24,7 +24,7 @@ SKILLS = (
 )
 # Packages whose install docs already point at the Parcha-ai/parcha-skills repository.
 PARCHA_SKILLS_SLUG = frozenset(
-    {"recall", "blast-radius", "verify-release", "tdd", "unslop", "review-loop"}
+    {"recall", "tether", "blast-radius", "verify-release", "tdd", "unslop", "review-loop"}
 )
 
 
@@ -75,7 +75,7 @@ class PortablePackagingTest(unittest.TestCase):
     def test_root_pi_manifest_exposes_every_canonical_skill(self):
         package = load_json(ROOT / "package.json")
         self.assertIn("pi-package", package["keywords"])
-        self.assertEqual(package["bin"]["tether"], "./tether/bin/tether.js")
+        self.assertNotIn("tether", package.get("bin", {}))
         paths = package["pi"]["skills"]
         self.assertEqual(paths, [f"./{name}/skills" for name in SKILLS])
         for relative in paths:
@@ -135,11 +135,7 @@ class PortablePackagingTest(unittest.TestCase):
         root_readme = (ROOT / "README.md").read_text()
         self.assertIn("https://skills.sh/Parcha-ai/parcha-skills", root_readme)
         self.assertIn("npx skills add Parcha-ai/parcha-skills", root_readme)
-        self.assertIn(
-            "npx --yes --package=@parcha/tether@0.2.0-beta.1",
-            root_readme,
-        )
-        self.assertIn("Do not install Tether", root_readme)
+        self.assertIn("Recall and Tether are instruction-only packages", root_readme)
 
         for name in SKILLS:
             package_readme = (ROOT / name / "README.md").read_text()
@@ -156,6 +152,23 @@ class PortablePackagingTest(unittest.TestCase):
                 f"npx skills add {repository} --skill {name}",
                 package_readme,
             )
+
+    def test_recall_and_tether_packages_contain_only_instructions(self):
+        for name in ("recall", "tether"):
+            package = load_json(ROOT / name / "package.json")
+            self.assertTrue(package["private"])
+            self.assertNotIn("bin", package)
+            self.assertEqual(
+                package["files"],
+                [".claude-plugin/", ".codex-plugin/", "skills/", "LICENSE", "README.md"],
+            )
+            for path in (ROOT / name).rglob("*"):
+                if path.is_file():
+                    self.assertTrue(
+                        path.suffix in {".md", ".json", ".yaml"} or path.name == "LICENSE",
+                        f"{name} contains implementation file: {path.relative_to(ROOT)}",
+                    )
+            self.assertFalse(any((ROOT / ".github/workflows").glob(f"{name}-*")))
 
     def test_effective_comms_is_a_complete_managed_snippet(self):
         snippet = (ROOT / "snippets/effective-comms/AGENTS.md").read_text()

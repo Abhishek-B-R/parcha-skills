@@ -141,9 +141,6 @@ def main() -> int:
 
         # Credential-free code smokes. Instruction-only Cascade is pinned by its package tests.
         smoke_env = base_env(sandbox / "smoke-home")
-        smoke_env["RECALL_DB"] = str(sandbox / "recall" / "index.db")
-        smoke_env["RECALL_CLAUDE_ROOT"] = str(sandbox / "empty-claude")
-        smoke_env["RECALL_CODEX_ROOT"] = str(sandbox / "empty-codex")
         run(
             "smoke-hands-free",
             ["python3", str(ROOT / "hands-free/skills/hands-free/scripts/call_user.py")],
@@ -158,24 +155,12 @@ def main() -> int:
             output,
         )
         run(
-            "smoke-recall",
-            ["python3", str(ROOT / "recall/skills/recall/scripts/recall.py"), "doctor"],
-            smoke_env,
-            output,
-        )
-        run(
             "smoke-recap",
             ["python3", str(ROOT / "recap/skills/recap/scripts/recap.py"), "--help"],
             smoke_env,
             output,
         )
         run("smoke-cascade", ["python3", "-m", "unittest", "discover", "-s", "cascade/tests", "-v"], smoke_env, output)
-        run(
-            "smoke-tether",
-            ["python3", "-m", "unittest", "discover", "-s", "tether/tests", "-v"],
-            smoke_env,
-            output,
-        )
         run(
             "smoke-desloppify",
             ["python3", "-m", "unittest", "discover", "-s", "desloppify/tests", "-v"],

@@ -51,3 +51,9 @@ Recap's two-view comprehension model—human-readable story plus chronological t
 by [truizlop/ndrstnd](https://github.com/truizlop/ndrstnd). Recap is an independent implementation
 for coding-agent session evidence, with exact boundary validation, git corroboration, privacy gates,
 and exhaustive accounting.
+
+Recall's engine is maintained separately. Installing the public Recall skill does
+not install its exporter. Set `RECALL_SCRIPT` to the private engine's absolute
+`recall.py` path, or pass `--recall-script`. To run integration tests against that
+engine, set `RECALL_TEST_SCRIPT` to the same path; without it, integration cases
+are explicitly skipped while standalone Recap checks still run.

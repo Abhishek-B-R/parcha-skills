@@ -7,11 +7,12 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "skills/recap/scripts/recap.py"
-RECALL = ROOT.parent / "recall/skills/recall/scripts/recall.py"
+RECALL = Path(os.environ["RECALL_TEST_SCRIPT"]).expanduser() if os.environ.get("RECALL_TEST_SCRIPT") else None
 sys.path.insert(0, str(SCRIPT.parent))
 
 
@@ -57,6 +58,8 @@ class RecapCollectorTest(unittest.TestCase):
                 os.environ[key] = value
 
     def args(self, session: Path, output: Path | None = None, repo: Path | None = None):
+        if RECALL is None or not RECALL.is_file():
+            self.skipTest("set RECALL_TEST_SCRIPT to the separately installed private Recall exporter")
         os.environ["RECALL_CLAUDE_ROOT"] = str(session.parent)
         os.environ["RECALL_CODEX_ROOT"] = str(session.parent)
         os.environ["RECALL_SESSION_CURSOR_DB"] = str(session.parent / "session-cursors.db")
@@ -66,6 +69,19 @@ class RecapCollectorTest(unittest.TestCase):
             current=False, session=str(session), output=str(output),
             repo=str(repo) if repo else None, recall_script=str(RECALL),
         )
+
+    def test_exporter_requires_a_separate_installation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home = Path(temporary)
+            script = home / "private-engine" / "recall.py"
+            script.parent.mkdir()
+            script.touch()
+            with mock.patch.object(Path, "home", return_value=home):
+                with mock.patch.dict(os.environ, {"RECALL_SCRIPT": str(script)}, clear=True):
+                    self.assertEqual(self.recap.find_recall_script(None), script)
+                with mock.patch.dict(os.environ, {}, clear=True):
+                    with self.assertRaisesRegex(self.recap.RecapError, "private Recall engine"):
+                        self.recap.find_recall_script(None)
 
     def test_session_target_preserves_remote_receipts_and_normalizes_paths(self):
         receipt = "recall://claude:mac:test/session-event?rev=1#item-0"
@@ -322,11 +338,14 @@ class RecapCollectorTest(unittest.TestCase):
                 "type": "assistant", "timestamp": "2026-07-14T00:00:01Z",
                 "message": {"content": "child event"},
             }) + "\n")
+            if RECALL is None or not RECALL.is_file():
+                self.skipTest("set RECALL_TEST_SCRIPT to the separately installed private Recall exporter")
             os.environ["RECALL_CLAUDE_ROOT"] = str(root)
             os.environ["RECALL_CODEX_ROOT"] = str(root / "codex")
             os.environ["RECALL_SESSION_CURSOR_DB"] = str(root / "state/session-cursors.db")
             os.environ["RECALL_EXPORT_SOURCE_ID"] = "claude:test:recap-set"
             output = root / "private" / "set.json"
+            output.parent.mkdir(mode=0o700)
             args = SimpleNamespace(
                 current=False, session=str(main), output=str(output), repo=None,
                 recall_script=str(RECALL), include_children=True, chain=False,

@@ -95,9 +95,7 @@ def recall_candidates(explicit: str | None) -> list[Path]:
         candidates.append(Path(explicit).expanduser())
     if os.environ.get("RECALL_SCRIPT"):
         candidates.append(Path(os.environ["RECALL_SCRIPT"]).expanduser())
-    repo_root = Path(__file__).resolve().parents[4]
     candidates.extend([
-        repo_root / "recall/skills/recall/scripts/recall.py",
         Path.home() / ".claude/skills/recall/scripts/recall.py",
         Path.home() / ".codex/skills/recall/scripts/recall.py",
         Path.home() / ".agents/skills/recall/scripts/recall.py",
@@ -109,7 +107,7 @@ def find_recall_script(explicit: str | None) -> Path:
     for candidate in recall_candidates(explicit):
         if candidate.is_file():
             return candidate
-    raise RecapError("Recall session exporter not found; install Recall or pass --recall-script")
+    raise RecapError("Recall session exporter not found; install the private Recall engine and set RECALL_SCRIPT or pass --recall-script")
 
 
 def recall_session_pages(script: Path, *, current: bool, session: str | None):

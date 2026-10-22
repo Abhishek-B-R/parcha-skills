@@ -11,7 +11,7 @@ Our collection of portable Agent Skills for Claude Code, Codex, and pi.
 | [`cascade`](cascade/) | Carries large projects through verifiable tasks and parallel work. | Keeps a living task graph; executes serially when parallel tools are unavailable. |
 | [`recall`](recall/) | Indexed local search over prior Claude Code and Codex sessions. | Runs from pi, but does not index pi's own transcripts yet. |
 | [`recap`](recap/) | Reconstructs everything observable that happened in one exact coding-agent session. | Uses Recall's Claude/Codex evidence; pi can run it but is not yet an indexed source. |
-| [`tether`](tether/) | Keeps Slack threads attached to the exact agents that created them. | Codex and Claude Code resume natively; stock pi publishes as a headless run. End-to-end routing also installs an external Hermes plugin/runtime. |
+| [`tether`](tether/) | Keeps Slack threads attached to the exact agents that created them. | Codex and Claude Code resume natively; stock pi publishes as a headless run. Requires a separately installed private runtime. |
 | [`desloppify`](desloppify/) | Turns whole-codebase slop into evidence-backed cleanup with Peter O'Malley's official engine. | One canonical workflow selects honest native or prepared-packet review routes per harness. |
 | [`autoqa`](autoqa/) | Points at any repo, discovers how it runs, QAs the live app end-to-end with a witnessed report, and pairs its UI witnesses with base-instance captures as the PR's Before / After. | Uses whatever browser tooling the harness has; API/CLI checks work everywhere. |
 | [`precap`](precap/) | Recaps a task before doing it: a grounded, past-tense account of the finished work that long-running agents check themselves against for drift. | Pure markdown plus a stdlib Python checker; identical in all three harnesses. |
@@ -112,16 +112,9 @@ Add `--global` for a user-level install or `--agent claude-code`, `--agent codex
 payloads used by the native installs below; npm publication of the individual packages is not
 required.
 
-Tether also needs its external Hermes runtime. Install the complete bridge with:
-
-```bash
-npx --yes --package=@parcha/tether@0.2.0-beta.1 \
-  tether setup --harness=both
-```
-
-That command installs an immutable published package. Do not install Tether
-from a moving branch. The package README documents source installs pinned to a
-verified 40-character release commit.
+Recall and Tether are instruction-only packages here. Their engines, runtimes,
+installers, and deployment configuration are maintained separately. Install the
+systems through your organization's private distribution before using the skills.
 
 ## Install for Claude Code
 

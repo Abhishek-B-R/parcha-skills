@@ -1,21 +1,12 @@
 # Support
 
-Use [GitHub Issues](https://github.com/Parcha-ai/parcha-skills/issues) for a
-reproducible Tether defect or documentation gap.
+Use [GitHub Issues](https://github.com/Parcha-ai/parcha-skills/issues) for defects
+in the skill instructions or packaging. Include the skill name, repository
+revision, harness, and a redacted reproduction.
 
-Before filing:
+Recall and Tether runtimes and deployment tools are maintained separately. Use
+the system owner's private support channel for installation or runtime problems.
 
-1. Reproduce on the latest tagged pre-release and supported Hermes version.
-2. Run `tether version` and `tether doctor`.
-3. Read the [support matrix](../tether/README.md#supported-boundary) and
-   [operations guide](../tether/docs/OPERATIONS.md).
-4. Include the operating system, Python and Node versions, typed error,
-   affected command, and Socket Mode/polling status.
-
-Do not attach secrets, Slack content, `bridges.db`, transcripts, customer data,
-environment dumps, or raw Hermes logs. Use
+Do not attach credentials, transcripts, customer data, or raw service logs. Use
 [private vulnerability reporting](https://github.com/Parcha-ai/parcha-skills/security/advisories/new)
 for security-sensitive evidence.
-
-Branch installs, unsupported platforms or Hermes versions, and locally modified
-runtime files receive best-effort community support only.

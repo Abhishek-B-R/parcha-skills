@@ -7,6 +7,7 @@ import argparse
 import importlib.util
 import io
 import json
+import os
 import tempfile
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -14,11 +15,13 @@ from types import SimpleNamespace
 
 
 ROOT = Path(__file__).resolve().parents[3]
-RECALL = ROOT / "recall" / "skills" / "recall" / "scripts" / "recall.py"
+RECALL = Path(os.environ["RECALL_TEST_SCRIPT"]).expanduser() if os.environ.get("RECALL_TEST_SCRIPT") else None
 CORPUS = Path(__file__).with_name("corpus.json")
 
 
 def load_recall():
+    if RECALL is None or not RECALL.is_file():
+        raise SystemExit("set RECALL_TEST_SCRIPT to the separately installed private Recall engine")
     spec = importlib.util.spec_from_file_location("recall_baseline", RECALL)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader

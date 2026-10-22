@@ -1,0 +1,37 @@
+{
+  "name": "@parcha/recall",
+  "version": "0.1.0",
+  "description": "Agent instructions for a separately installed Recall system",
+  "files": [
+    ".claude-plugin/",
+    ".codex-plugin/",
+    "skills/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "python3 -m json.tool .claude-plugin/plugin.json >/dev/null && python3 -m json.tool .codex-plugin/plugin.json >/dev/null",
+    "pack:check": "npm pack --dry-run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Parcha-ai/parcha-skills.git",
+    "directory": "recall"
+  },
+  "keywords": [
+    "claude-code",
+    "codex",
+    "session-history",
+    "search",
+    "memory",
+    "pi-package"
+  ],
+  "pi": {
+    "skills": [
+      "./skills"
+    ]
+  },
+  "author": "Parcha Labs (https://parcha.com)",
+  "license": "MIT",
+  "private": true
+}

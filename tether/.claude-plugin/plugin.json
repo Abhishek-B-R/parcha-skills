@@ -1,0 +1,13 @@
+{
+  "name": "tether",
+  "version": "0.4.0",
+  "description": "Keep Slack threads attached to their Claude Code, Codex, Zellij, or headless agents through Hermes.",
+  "author": {
+    "name": "Parcha Labs",
+    "url": "https://parcha.com"
+  },
+  "homepage": "https://github.com/Parcha-ai/parcha-skills/tree/main/tether",
+  "repository": "https://github.com/Parcha-ai/parcha-skills/tree/main/tether",
+  "license": "MIT",
+  "skills": "./skills/"
+}
